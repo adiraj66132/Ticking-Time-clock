@@ -3,6 +3,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&display=swap');
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. */
 
 @layer base {
@@ -54,34 +56,70 @@
   }
 
   body {
-    @apply bg-background text-foreground;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    @apply bg-background text-foreground font-rounded;
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 25%, #16213e 50%, #1a1a2e 75%, #0a0a0f 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     min-height: 100vh;
   }
 }
 
 @layer components {
   .gradient-text {
-    background: linear-gradient(135deg, #06b6d4 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 25%, #8b5cf6 50%, #ec4899 75%, #06b6d4 100%);
+    background-size: 300% 300%;
+    animation: gradientFlow 8s ease infinite;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   
   .clock-card {
-    background: rgba(15, 23, 42, 0.8);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(139, 92, 246, 0.2);
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.8),
+      0 0 60px rgba(139, 92, 246, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
   
   .time-segment {
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid rgba(139, 92, 246, 0.3);
-    transition: all 0.3s ease;
+    background: rgba(30, 41, 59, 0.7);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 
+      0 10px 25px -5px rgba(0, 0, 0, 0.3),
+      0 0 20px rgba(139, 92, 246, 0.1);
   }
   
   .time-segment:hover {
-    border-color: rgba(139, 92, 246, 0.6);
-    transform: translateY(-2px);
+    border-color: rgba(139, 92, 246, 0.7);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+      0 20px 40px -10px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(139, 92, 246, 0.2);
+  }
+
+  .font-rounded {
+    font-family: 'Nunito', sans-serif;
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes gradientFlow {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
   }
 }
