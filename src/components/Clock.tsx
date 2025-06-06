@@ -63,7 +63,7 @@ const Clock = () => {
         <div className="flex justify-center items-center gap-6 md:gap-8 mb-8">
           {/* Hours */}
           <div className="time-segment rounded-3xl p-6 md:p-8 text-center min-w-[100px] md:min-w-[120px]">
-            <div className="text-5xl md:text-7xl font-rounded font-light text-white mb-3">
+            <div className="text-5xl md:text-7xl font-serif font-normal text-white mb-3">
               {hours}
             </div>
             <div className="text-sm md:text-base text-muted-foreground uppercase tracking-wider font-rounded">
@@ -72,13 +72,13 @@ const Clock = () => {
           </div>
 
           {/* Separator */}
-          <div className="text-5xl md:text-7xl font-light text-white/60 animate-pulse">
+          <div className="text-5xl md:text-7xl font-serif text-white/60 animate-pulse">
             :
           </div>
 
           {/* Minutes */}
           <div className="time-segment rounded-3xl p-6 md:p-8 text-center min-w-[100px] md:min-w-[120px]">
-            <div className="text-5xl md:text-7xl font-rounded font-light text-white mb-3">
+            <div className="text-5xl md:text-7xl font-serif font-normal text-white mb-3">
               {minutes}
             </div>
             <div className="text-sm md:text-base text-muted-foreground uppercase tracking-wider font-rounded">
@@ -87,13 +87,13 @@ const Clock = () => {
           </div>
 
           {/* Separator */}
-          <div className="text-5xl md:text-7xl font-light text-white/60 animate-pulse">
+          <div className="text-5xl md:text-7xl font-serif text-white/60 animate-pulse">
             :
           </div>
 
           {/* Seconds */}
           <div className="time-segment rounded-3xl p-6 md:p-8 text-center min-w-[100px] md:min-w-[120px]">
-            <div className="text-5xl md:text-7xl font-rounded font-light text-white mb-3">
+            <div className="text-5xl md:text-7xl font-serif font-normal text-white mb-3">
               {seconds}
             </div>
             <div className="text-sm md:text-base text-muted-foreground uppercase tracking-wider font-rounded">
@@ -104,7 +104,7 @@ const Clock = () => {
           {/* AM/PM Display for 12-hour format */}
           {!is24Hour && period && (
             <div className="time-segment rounded-3xl p-6 md:p-8 text-center min-w-[80px]">
-              <div className="text-3xl md:text-4xl font-rounded font-light text-white mb-3">
+              <div className="text-3xl md:text-4xl font-serif font-normal text-white mb-3">
                 {period}
               </div>
               <div className="text-sm md:text-base text-muted-foreground uppercase tracking-wider font-rounded">
