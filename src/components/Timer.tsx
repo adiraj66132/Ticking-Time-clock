@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw, Plus, Minus } from 'lucide-react';
+import { localStorageUtils } from '@/lib/utils';
 
 const Timer = () => {
   const [totalTime, setTotalTime] = useState(300000); // 5 minutes in milliseconds
@@ -9,6 +10,85 @@ const Timer = () => {
   const [isRunning, setIsRunning] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+  const lastUpdateTimeRef = useRef<number>(Date.now());
+
+  // Load timer state from localStorage on component mount
+  useEffect(() => {
+    const savedState = localStorageUtils.load('timerState', {
+      totalTime: 300000,
+      remainingTime: 300000,
+      isRunning: false,
+      isFinished: false,
+      startTime: null,
+      lastUpdateTime: Date.now()
+    });
+    
+    setTotalTime(savedState.totalTime);
+    setRemainingTime(savedState.remainingTime);
+    setIsRunning(savedState.isRunning);
+    setIsFinished(savedState.isFinished);
+    startTimeRef.current = savedState.startTime;
+    lastUpdateTimeRef.current = savedState.lastUpdateTime || Date.now();
+
+    // If timer was running when page was closed, calculate elapsed time
+    if (savedState.isRunning && savedState.startTime && !savedState.isFinished) {
+      const now = Date.now();
+      const elapsedSinceLastUpdate = now - savedState.lastUpdateTime;
+      const newRemainingTime = Math.max(0, savedState.remainingTime - elapsedSinceLastUpdate);
+      
+      if (newRemainingTime <= 0) {
+        setRemainingTime(0);
+        setIsRunning(false);
+        setIsFinished(true);
+      } else {
+        setRemainingTime(newRemainingTime);
+        lastUpdateTimeRef.current = now;
+      }
+    }
+  }, []);
+
+  // Save timer state to localStorage whenever it changes
+  useEffect(() => {
+    const timerState = {
+      totalTime,
+      remainingTime,
+      isRunning,
+      isFinished,
+      startTime: startTimeRef.current,
+      lastUpdateTime: lastUpdateTimeRef.current
+    };
+    localStorageUtils.save('timerState', timerState);
+  }, [totalTime, remainingTime, isRunning, isFinished]);
+
+  // Handle page visibility changes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Page is hidden, update lastUpdateTime
+        lastUpdateTimeRef.current = Date.now();
+      } else {
+        // Page is visible again, calculate elapsed time
+        if (isRunning && !isFinished) {
+          const now = Date.now();
+          const elapsedSinceLastUpdate = now - lastUpdateTimeRef.current;
+          const newRemainingTime = Math.max(0, remainingTime - elapsedSinceLastUpdate);
+          
+          if (newRemainingTime <= 0) {
+            setRemainingTime(0);
+            setIsRunning(false);
+            setIsFinished(true);
+          } else {
+            setRemainingTime(newRemainingTime);
+          }
+          lastUpdateTimeRef.current = now;
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isRunning, isFinished, remainingTime]);
 
   useEffect(() => {
     if (isRunning && remainingTime > 0) {
@@ -21,6 +101,7 @@ const Timer = () => {
           }
           return prevTime - 100;
         });
+        lastUpdateTimeRef.current = Date.now();
       }, 100);
     } else {
       if (intervalRef.current) {
@@ -50,7 +131,15 @@ const Timer = () => {
     if (isFinished) {
       setIsFinished(false);
       setRemainingTime(totalTime);
+      startTimeRef.current = null;
+      lastUpdateTimeRef.current = Date.now();
     }
+    
+    if (!isRunning) {
+      startTimeRef.current = Date.now();
+      lastUpdateTimeRef.current = Date.now();
+    }
+    
     setIsRunning(!isRunning);
   };
 
@@ -58,6 +147,8 @@ const Timer = () => {
     setIsRunning(false);
     setIsFinished(false);
     setRemainingTime(totalTime);
+    startTimeRef.current = null;
+    lastUpdateTimeRef.current = Date.now();
   };
 
   const adjustTime = (amount: number) => {

@@ -1,61 +1,102 @@
-# Ticking Time - A Modern Clock Application
+# Ticking Time Clock
 
-A beautiful and feature-rich clock application built with React and TypeScript, featuring:
-
-- Digital and analog clock displays
-- Multiple timezones support
-- Stopwatch functionality
-- Timer functionality
-- Modern, responsive UI with beautiful animations
-- Dark mode support
-
-## Getting Started
-
-Make sure you have Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-```sh
-# Clone the repository
-git clone <YOUR_GIT_URL>
-
-# Navigate to the project directory
-cd ticking-time-again
-
-# Install dependencies
-npm i
-
-# Start the development server
-npm run dev
-```
-
-## Technologies Used
-
-This project is built with:
-
-- Vite - Next Generation Frontend Tooling
-- React - A JavaScript library for building user interfaces
-- TypeScript - JavaScript with syntax for types
-- Tailwind CSS - A utility-first CSS framework
-- shadcn/ui - Re-usable components built with Radix UI and Tailwind CSS
+A beautiful and feature-rich clock application built with React, TypeScript, and Tailwind CSS.
 
 ## Features
 
-- **Clock**
-  - Digital time display with hours, minutes, and seconds
-  - 12/24 hour format toggle
-  - Multiple timezone support
-  - Beautiful gradient animations
+### 🕐 Clock
+- Real-time digital clock display
+- Multiple time formats (12/24 hour)
+- Beautiful gradient animations
+- Responsive design
 
-- **Stopwatch**
-  - Precise timing with millisecond accuracy
-  - Start, pause, and reset functionality
-  - Clean and intuitive interface
+### ⏱️ Timer
+- Countdown timer with customizable duration
+- **NEW**: Local storage persistence - remembers timer state when stopped
+- **NEW**: Background tab support - continues running when switching tabs
+- Visual feedback when timer completes
+- Easy time adjustment controls
 
-- **Timer**
-  - Customizable countdown timer
-  - Visual and textual time remaining display
-  - Time adjustment controls
-  - Completion notification
+### ⏱️ Stopwatch
+- High-precision stopwatch with millisecond accuracy
+- **NEW**: Local storage persistence - remembers stopwatch state when stopped
+- **NEW**: Background tab support - continues running when switching tabs
+- Clean, readable display
+- Start, pause, and reset functionality
 
-## Contributing
+## Recent Updates
 
-Feel free to submit issues and enhancement requests!
+### Local Storage Persistence
+- Timer and Stopwatch now remember their state when the user stops them
+- State is automatically saved to browser localStorage
+- Includes remaining time, running state, and completion status
+- Robust error handling for localStorage operations
+
+### Background Tab Support
+- **Timer and Stopwatch continue running when switching browser tabs**
+- Uses Page Visibility API to detect tab focus changes
+- Accurate timing even when the tab is not active
+- Automatic time calculation when returning to the tab
+- Persistent state across browser sessions
+
+### Font Updates
+- Replaced Google Fonts (Nunito) with Times New Roman
+- Improved performance by removing external font dependencies
+- Maintains elegant typography throughout the application
+
+## Getting Started
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Open your browser and navigate to `http://localhost:8080`
+
+## Technology Stack
+
+- **React 18** with TypeScript
+- **Vite** for fast development and building
+- **Tailwind CSS** for styling
+- **Lucide React** for icons
+- **Radix UI** for accessible components
+
+## Local Storage Keys
+
+The application uses the following localStorage keys:
+- `timerState`: Stores timer configuration, state, and timing data
+- `stopwatchState`: Stores stopwatch elapsed time, running state, and timing data
+
+### Timer State Structure:
+```javascript
+{
+  totalTime: number,        // Total timer duration in milliseconds
+  remainingTime: number,    // Remaining time in milliseconds
+  isRunning: boolean,       // Whether timer is currently running
+  isFinished: boolean,      // Whether timer has completed
+  startTime: number | null, // When timer was started (timestamp)
+  lastUpdateTime: number    // Last update timestamp for accuracy
+}
+```
+
+### Stopwatch State Structure:
+```javascript
+{
+  time: number,             // Elapsed time in milliseconds
+  isRunning: boolean,       // Whether stopwatch is currently running
+  startTime: number | null, // When stopwatch was started (timestamp)
+  lastUpdateTime: number    // Last update timestamp for accuracy
+}
+```
+
+## Development
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run lint` - Run ESLint
+- `npm run preview` - Preview production build

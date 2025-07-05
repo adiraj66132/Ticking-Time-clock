@@ -2,16 +2,77 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw } from 'lucide-react';
+import { localStorageUtils } from '@/lib/utils';
 
 const Stopwatch = () => {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+  const lastUpdateTimeRef = useRef<number>(Date.now());
+
+  // Load stopwatch state from localStorage on component mount
+  useEffect(() => {
+    const savedState = localStorageUtils.load('stopwatchState', {
+      time: 0,
+      isRunning: false,
+      startTime: null,
+      lastUpdateTime: Date.now()
+    });
+    
+    setTime(savedState.time);
+    setIsRunning(savedState.isRunning);
+    startTimeRef.current = savedState.startTime;
+    lastUpdateTimeRef.current = savedState.lastUpdateTime || Date.now();
+
+    // If stopwatch was running when page was closed, calculate elapsed time
+    if (savedState.isRunning && savedState.startTime) {
+      const now = Date.now();
+      const elapsedSinceLastUpdate = now - savedState.lastUpdateTime;
+      const newTime = savedState.time + elapsedSinceLastUpdate;
+      setTime(newTime);
+      lastUpdateTimeRef.current = now;
+    }
+  }, []);
+
+  // Save stopwatch state to localStorage whenever it changes
+  useEffect(() => {
+    const stopwatchState = {
+      time,
+      isRunning,
+      startTime: startTimeRef.current,
+      lastUpdateTime: lastUpdateTimeRef.current
+    };
+    localStorageUtils.save('stopwatchState', stopwatchState);
+  }, [time, isRunning]);
+
+  // Handle page visibility changes
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Page is hidden, update lastUpdateTime
+        lastUpdateTimeRef.current = Date.now();
+      } else {
+        // Page is visible again, calculate elapsed time
+        if (isRunning) {
+          const now = Date.now();
+          const elapsedSinceLastUpdate = now - lastUpdateTimeRef.current;
+          const newTime = time + elapsedSinceLastUpdate;
+          setTime(newTime);
+          lastUpdateTimeRef.current = now;
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isRunning, time]);
 
   useEffect(() => {
     if (isRunning) {
       intervalRef.current = setInterval(() => {
         setTime(prevTime => prevTime + 10);
+        lastUpdateTimeRef.current = Date.now();
       }, 10);
     } else {
       if (intervalRef.current) {
@@ -40,12 +101,18 @@ const Stopwatch = () => {
   };
 
   const handleStartStop = () => {
+    if (!isRunning) {
+      startTimeRef.current = Date.now();
+      lastUpdateTimeRef.current = Date.now();
+    }
     setIsRunning(!isRunning);
   };
 
   const handleReset = () => {
     setIsRunning(false);
     setTime(0);
+    startTimeRef.current = null;
+    lastUpdateTimeRef.current = Date.now();
   };
 
   const { minutes, seconds, milliseconds } = formatTime(time);

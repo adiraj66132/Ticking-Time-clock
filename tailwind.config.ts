@@ -20,7 +20,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'rounded': ['Nunito', 'sans-serif'],
+				'rounded': ['Times New Roman', 'Times', 'serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
